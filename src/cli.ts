@@ -40,34 +40,12 @@ try {
         process.exit(1)
       }
 
-      if (!existsSync(vsix)) {
-        await execCommand('npx', ['vsce', 'package'], config)
-      }
-
       const failed: string[] = []
-
-      // upload .vsix to release page
-      if (!skipGit) {
-        const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
-        const result = await tryExec({
-          config,
-          title: 'Uploading .vsix to release page...',
-          successMessage: 'Uploaded .vsix to release page.',
-          errorMessage: 'Failed to upload .vsix to release page. Please ensure the release page has been created.',
-          fn: async () => {
-            await execCommand('gh', args, config)
-          },
-          dryFn: () => {
-            console.log(c.green(`gh ${args.join(' ')}`))
-          },
-        })
-        if (!result)
-          failed.push('git')
-      }
 
       // publish to vscode marketplace
       if (!skipVsce) {
-        const args = ['vsce', 'publish', '--packagePath', vsix]
+        // const args = ['vsce', 'publish', '--packagePath', vsix]
+        const args = ['vsce', 'publish']
         if (config.vscePat) {
           args.push('-p', config.vscePat)
         }
@@ -87,6 +65,10 @@ try {
         })
         if (!result)
           failed.push('vsce')
+      }
+
+      if (!existsSync(vsix)) {
+        await execCommand('npx', ['vsce', 'package'], config)
       }
 
       // publish to openvsx registry
@@ -111,6 +93,25 @@ try {
         })
         if (!result)
           failed.push('ovsx')
+      }
+
+      // upload .vsix to release page
+      if (!skipGit) {
+        const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
+        const result = await tryExec({
+          config,
+          title: 'Uploading .vsix to release page...',
+          successMessage: 'Uploaded .vsix to release page.',
+          errorMessage: 'Failed to upload .vsix to release page. Please ensure the release page has been created.',
+          fn: async () => {
+            await execCommand('gh', args, config)
+          },
+          dryFn: () => {
+            console.log(c.green(`gh ${args.join(' ')}`))
+          },
+        })
+        if (!result)
+          failed.push('git')
       }
 
       if (failed.length > 0) {

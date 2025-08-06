@@ -17,7 +17,7 @@
   "keywords": [
     "cli",
     "vscode-extensions",
-    "publisher"
+    "publish"
   ],
   "exports": {
     ".": "./dist/index.mjs",
