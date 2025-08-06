@@ -21,29 +21,37 @@ try {
     .option('--github-token <token>', 'GitHub Token')
     .option('--vsce-pat <token>', 'Visual Studio Code Extension Token')
     .option('--ovsx-pat <token>', 'Open Vsx Registry Token')
-    .option('--skip-git', 'Skip upload .vsix to release page', { default: false })
-    .option('--skip-vsce', 'Skip vsce publish', { default: false })
-    .option('--skip-ovsx', 'Skip ovsx publish', { default: false })
+    .option('--exclude <platforms>', 'Exclude platforms from publishing (git, vsce, ovsx)', { default: [] })
     .option('--dry', 'Dry run', { default: false })
     .allowUnknownOptions()
     .action(async (options: CommandOptions) => {
+      console.log(`${c.yellow(name)} ${c.dim(`v${version}`)}`)
+      console.log()
+
       const config = await resolveConfig(options)
 
-      console.log(`${c.yellow(name)} ${c.dim(`v${version}`)}`)
-
       const vsix = `./${config.name}-${config.version}.vsix`
+      const skipGit = config.exclude.includes('git')
+      const skipVsce = config.exclude.includes('vsce')
+      const skipOvsx = config.exclude.includes('ovsx')
+
+      if (skipGit && skipVsce && skipOvsx) {
+        console.error(c.red('No platforms to publish to.'))
+        process.exit(1)
+      }
+
+      if (!existsSync(vsix)) {
+        await execCommand('npx', ['vsce', 'package'], config)
+      }
 
       // upload .vsix to release page
-      if (!config.skipGit) {
+      if (!skipGit) {
         const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
         await tryExec({
           config,
           title: 'Uploading .vsix to release page...',
           errorMessage: 'Failed to upload .vsix to release page. Please ensure the release page has been created.',
           fn: async () => {
-            if (!existsSync(vsix)) {
-              await execCommand('npx', ['vsce', 'package'], config)
-            }
             await execCommand('gh', args, config)
           },
           dryFn: () => {
@@ -53,8 +61,8 @@ try {
       }
 
       // publish to vsce
-      if (!config.skipVsce) {
-        const args = ['vsce', 'publish']
+      if (!skipVsce) {
+        const args = ['vsce', 'publish', '--packagePath', vsix, '-p', config.vscePat]
         await tryExec({
           config,
           title: 'Publishing to vsce...',
@@ -69,8 +77,8 @@ try {
       }
 
       // publish to ovsx
-      if (!config.skipOvsx) {
-        const args = ['ovsx', 'publish']
+      if (!skipOvsx) {
+        const args = ['ovsx', 'publish', vsix, '-p', config.ovsxPat]
         await tryExec({
           config,
           title: 'Publishing to ovsx...',

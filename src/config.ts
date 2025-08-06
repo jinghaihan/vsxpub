@@ -1,7 +1,8 @@
 import type { CommandOptions, PublishOptions } from './types'
 import process from 'node:process'
+import c from 'ansis'
 import { createConfigLoader } from 'unconfig'
-import { DEFAULT_PUBLISH_OPTIONS } from './constants'
+import { DEFAULT_PUBLISH_OPTIONS, PLATFORM_CHOICES } from './constants'
 import { getGitHubRepo, getGitTag, getVersionByGitTag, readTokenFromGitHubCli } from './git'
 import { getPackageName, getPackageVersion } from './package'
 
@@ -31,20 +32,32 @@ export async function resolveConfig(options: Partial<CommandOptions>): Promise<P
     merge: false,
   })
 
-  const config = await loader.load()
-  const configOptions = { ...defaults, ...config, ...options }
+  const configOptions = await loader.load()
+  const config = { ...defaults, ...configOptions, ...options }
 
-  configOptions.name = configOptions.name || await getPackageName(cwd)
-  configOptions.version = configOptions.version || await getPackageVersion() || await getVersionByGitTag()
-  if (typeof configOptions.dependencies !== 'boolean')
-    configOptions.dependencies = false
+  config.name = config.name || await getPackageName(cwd)
+  config.version = config.version || await getPackageVersion() || await getVersionByGitTag()
+  if (typeof config.dependencies !== 'boolean')
+    config.dependencies = false
 
-  configOptions.repo = configOptions.repo || await getGitHubRepo(configOptions.baseUrl)
-  configOptions.tag = configOptions.tag || await getGitTag() || `v${configOptions.version}`
+  config.repo = config.repo || await getGitHubRepo(config.baseUrl)
+  config.tag = config.tag || await getGitTag() || `v${config.version}`
 
-  configOptions.githubToken = configOptions.githubToken || process.env.GITHUB_TOKEN || await readTokenFromGitHubCli()
-  configOptions.vscePat = configOptions.vscePat || process.env.VSCE_PAT || ''
-  configOptions.ovsxPat = configOptions.ovsxPat || process.env.OVSX_PAT || ''
+  config.githubToken = config.githubToken || process.env.GITHUB_TOKEN || await readTokenFromGitHubCli()
+  config.vscePat = config.vscePat || process.env.VSCE_PAT || ''
+  config.ovsxPat = config.ovsxPat || process.env.OVSX_PAT || ''
 
-  return configOptions as PublishOptions
+  // normalize exclude
+  config.exclude = typeof config.exclude === 'string'
+    ? [config.exclude]
+    : config.exclude ?? []
+
+  if (config.exclude.length) {
+    const invalidPlatforms = config.exclude.filter(p => !PLATFORM_CHOICES.includes(p))
+    if (invalidPlatforms.length) {
+      console.warn(`Invalid exclude platform: ${c.yellow(invalidPlatforms.join(', '))}`)
+    }
+  }
+
+  return config as PublishOptions
 }

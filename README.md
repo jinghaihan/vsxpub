@@ -1,5 +1,10 @@
 # vsxpub
 
+[![npm version][npm-version-src]][npm-version-href]
+[![bundle][bundle-src]][bundle-href]
+[![JSDocs][jsdocs-src]][jsdocs-href]
+[![License][license-src]][license-href]
+
 A CLI tool for publishing VS Code extensions to the Marketplace, OpenVSX, and GitHub Releases.
 
 ## Usage
@@ -8,11 +13,11 @@ A CLI tool for publishing VS Code extensions to the Marketplace, OpenVSX, and Gi
 npx vsxpub
 ```
 
-You can skip publishing to specific platforms by using the `--skip-git`, `--skip-vsce`, or `--skip-ovsx` flags.
+You can skip publishing to specific platforms by using the `--exclude`.
 
 Examples:
-- Local development: `npx vsxpub --skip-git` to skip GitHub releases
-- CI/CD pipeline: `npx vsxpub --skip-vsce --skip-ovsx` to avoid configuring secrets
+- Local development: `npx vsxpub --exclude git` to skip GitHub releases
+- CI/CD pipeline: `npx vsxpub --exclude vsce --exclude ovsx` to avoid configuring secrets
 
 ## Environment Variables
 
@@ -79,8 +84,23 @@ jobs:
 
 ## Why?
 
-Modern IDEs like Cursor and Windsurf that fork VS Code obtain their extensions from OpenVSX instead of the official VS Code Marketplace. This creates significant additional workload for VS Code extension developers who need to manually synchronize their extensions to OpenVSX. When versions become inconsistent between the two platforms, it causes numerous problems for users who expect the same extension experience across different IDEs.
+Modern IDEs like Cursor and Windsurf that fork VS Code obtain their extensions from OpenVSX instead of the official VS Code Marketplace. This creates significant additional workload for VS Code extension developers who need to manually synchronize their extensions to OpenVSX.
+
+When versions become inconsistent between the two platforms, it causes numerous problems for users who expect the same extension experience across different IDEs.
 
 ## License
 
 [MIT](./LICENSE) License © [jinghaihan](https://github.com/jinghaihan)
+
+<!-- Badges -->
+
+[npm-version-src]: https://img.shields.io/npm/v/vsxpub?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/vsxpub
+[npm-downloads-src]: https://img.shields.io/npm/dm/vsxpub?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/vsxpub
+[bundle-src]: https://img.shields.io/bundlephobia/minzip/vsxpub?style=flat&colorA=080f12&colorB=1fa669&label=minzip
+[bundle-href]: https://bundlephobia.com/result?p=vsxpub
+[license-src]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/jinghaihan/vsxpub/LICENSE
+[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
+[jsdocs-href]: https://www.jsdocs.io/package/vsxpub

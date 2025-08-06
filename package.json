@@ -19,6 +19,21 @@
     "vscode-extensions",
     "publisher"
   ],
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./cli": "./dist/cli.mjs",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "bin": {
+    "vsxpub": "./bin/vsxpub.mjs"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "scripts": {
     "start": "tsx ./src/cli.ts",
     "build": "unbuild",

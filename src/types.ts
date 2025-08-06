@@ -1,14 +1,16 @@
+import type { PLATFORM_CHOICES } from './constants'
+
+export type Platform = (typeof PLATFORM_CHOICES)[number]
+
 export type MaybePromise<T> = T | Promise<T>
 
-export interface CommonOpitons {
+export interface CommonOptions {
   cwd?: string
   dry?: boolean
-  skipGit?: boolean
-  skipVsce?: boolean
-  skipOvsx?: boolean
+  exclude?: Platform[]
 }
 
-export interface CommandOptions extends CommonOpitons {
+export interface CommandOptions extends CommonOptions {
   /**
    * Github base url
    * @default github.com
