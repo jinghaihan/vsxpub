@@ -1,0 +1,28 @@
+packages: []
+catalogs:
+  build:
+    unbuild: ^3.6.0
+  cli:
+    bumpp: ^10.2.2
+    pncat: ^0.4.1
+    taze: ^19.1.0
+  dev:
+    acorn: latest
+    typescript: ^5.9.2
+  lint:
+    '@antfu/eslint-config': ^5.1.0
+    eslint: ^9.32.0
+    lint-staged: ^16.1.4
+    simple-git-hooks: ^2.13.1
+  node:
+    ansis: ^4.1.0
+    cac: ^6.7.14
+    execa: ^9.6.0
+    pathe: ^2.0.3
+    unconfig: ^7.3.2
+  script:
+    tsx: ^4.20.3
+  test:
+    vitest: ^3.2.4
+  types:
+    '@types/node': ^24.2.0

@@ -1,0 +1,64 @@
+{
+  "name": "vsxpub",
+  "type": "module",
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.14.0",
+  "description": "A CLI tool to publish VS Code extensions to Marketplace, OpenVSX, and GitHub Releases.",
+  "author": "jinghaihan",
+  "license": "MIT",
+  "homepage": "https://github.com/jinghaihan/vsxpub#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jinghaihan/vsxpub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jinghaihan/vsxpub/issues"
+  },
+  "keywords": [
+    "cli",
+    "vscode-extensions",
+    "publisher"
+  ],
+  "scripts": {
+    "start": "tsx ./src/cli.ts",
+    "build": "unbuild",
+    "typecheck": "tsc",
+    "test": "vitest",
+    "lint": "eslint",
+    "deps": "taze major -I",
+    "release": "bumpp && pnpm publish --no-git-checks",
+    "catalog": "pncat",
+    "prepare": "npx simple-git-hooks",
+    "bootstrap": "pnpm install",
+    "preinstall": "npx only-allow pnpm",
+    "prepublishOnly": "pnpm build"
+  },
+  "dependencies": {
+    "ansis": "catalog:node",
+    "cac": "catalog:node",
+    "execa": "catalog:node",
+    "pathe": "catalog:node",
+    "unconfig": "catalog:node"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@types/node": "catalog:types",
+    "acorn": "catalog:dev",
+    "bumpp": "catalog:cli",
+    "eslint": "catalog:lint",
+    "lint-staged": "catalog:lint",
+    "pncat": "catalog:cli",
+    "simple-git-hooks": "catalog:lint",
+    "taze": "catalog:cli",
+    "tsx": "catalog:script",
+    "typescript": "catalog:dev",
+    "unbuild": "catalog:build",
+    "vitest": "catalog:test"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}
