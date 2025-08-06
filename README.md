@@ -63,6 +63,11 @@ jobs:
         with:
           node-version: lts/*
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+
+      - run: pnpm install
+
       # Create release page with changelog
       - run: npx changelogithub
         env:
@@ -70,7 +75,7 @@ jobs:
 
       # Generate .vsix file
       - name: Generate .vsix file
-        run: pnpm package
+        run: npx vsce package --no-dependencies
 
       # Publish extension to all platforms
       # Or you can skip publishing to specific platforms in CI and run npx vsxpub locally without configuring secrets

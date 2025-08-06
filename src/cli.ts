@@ -44,52 +44,77 @@ try {
         await execCommand('npx', ['vsce', 'package'], config)
       }
 
+      const failed: string[] = []
+
       // upload .vsix to release page
       if (!skipGit) {
         const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
-        await tryExec({
+        const result = await tryExec({
           config,
           title: 'Uploading .vsix to release page...',
+          successMessage: 'Uploaded .vsix to release page.',
           errorMessage: 'Failed to upload .vsix to release page. Please ensure the release page has been created.',
           fn: async () => {
             await execCommand('gh', args, config)
           },
           dryFn: () => {
-            console.log(c.green(`gh ${normalizeArgs(args, config).join(' ')}`))
+            console.log(c.green(`gh ${args.join(' ')}`))
           },
         })
+        if (!result)
+          failed.push('git')
       }
 
-      // publish to vsce
+      // publish to vscode marketplace
       if (!skipVsce) {
-        const args = ['vsce', 'publish', '--packagePath', vsix, '-p', config.vscePat]
-        await tryExec({
+        const args = ['vsce', 'publish', '--packagePath', vsix]
+        if (config.vscePat) {
+          args.push('-p', config.vscePat)
+        }
+        const normalizedArgs = normalizeArgs(args, config)
+
+        const result = await tryExec({
           config,
           title: 'Publishing to vsce...',
+          successMessage: 'Published to vsce.',
           errorMessage: 'Failed to publish to vsce.',
           fn: async () => {
-            await execCommand('npx', args, config)
+            await execCommand('npx', normalizedArgs, config)
           },
           dryFn: () => {
-            console.log(c.green(`npx ${normalizeArgs(args, config).join(' ')}`))
+            console.log(c.green(`npx ${normalizedArgs.join(' ')}`))
           },
         })
+        if (!result)
+          failed.push('vsce')
       }
 
-      // publish to ovsx
+      // publish to openvsx registry
       if (!skipOvsx) {
-        const args = ['ovsx', 'publish', vsix, '-p', config.ovsxPat]
-        await tryExec({
+        const args = ['ovsx', 'publish', vsix]
+        if (config.ovsxPat) {
+          args.push('-p', config.ovsxPat)
+        }
+        const normalizedArgs = normalizeArgs(args, config)
+
+        const result = await tryExec({
           config,
           title: 'Publishing to ovsx...',
+          successMessage: 'Published to ovsx.',
           errorMessage: 'Failed to publish to ovsx.',
           fn: async () => {
-            await execCommand('npx', args, config)
+            await execCommand('npx', normalizedArgs, config)
           },
           dryFn: () => {
-            console.log(c.green(`npx ${normalizeArgs(args, config).join(' ')}`))
+            console.log(c.green(`npx ${normalizedArgs.join(' ')}`))
           },
         })
+        if (!result)
+          failed.push('ovsx')
+      }
+
+      if (failed.length > 0) {
+        throw new Error(c.red(`Failed to publish to ${failed.join(', ')}.`))
       }
     })
 
@@ -109,7 +134,8 @@ async function execCommand(cmd: string, args: string[], config: PublishOptions) 
     VSCE_PAT: config.vscePat,
     OVSX_PAT: config.ovsxPat,
   }
-  await execa(cmd, normalizeArgs(args, config), { env })
+
+  await execa(cmd, args, { env })
 }
 
 function normalizeArgs(args: string[], options: PublishOptions) {
@@ -122,10 +148,12 @@ function normalizeArgs(args: string[], options: PublishOptions) {
 async function tryExec(options: {
   config: PublishOptions
   title: string
+  successMessage: string
   errorMessage: string
   fn: () => MaybePromise<void>
   dryFn?: () => MaybePromise<void>
-}) {
+}): Promise<boolean> {
+  let success = false
   console.log()
   console.log(c.dim('--------------'))
   console.log(c.blue(options.title))
@@ -134,14 +162,24 @@ async function tryExec(options: {
       await options.dryFn?.()
     else
       await options.fn()
+
+    success = true
+
+    console.log()
+    console.log(c.green(options.successMessage))
+    console.log()
   }
   catch (error) {
     console.log()
     console.error(c.red(options.errorMessage))
-    console.error(c.red(error))
+    console.error(c.red(error instanceof Error ? error.message : String(error)))
     console.log()
+
+    success = false
   }
   finally {
     console.log(c.dim('--------------'))
   }
+
+  return success
 }
