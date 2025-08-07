@@ -34,9 +34,9 @@ try {
       const config = await resolveConfig(options)
 
       const vsix = `./${config.name}-${config.version}.vsix`
-      const skipGit = config.exclude.includes('git')
-      const skipVsce = config.exclude.includes('vsce')
-      const skipOvsx = config.exclude.includes('ovsx')
+      const skipGit = !config.include.includes('git')
+      const skipVsce = !config.include.includes('vsce')
+      const skipOvsx = !config.include.includes('ovsx')
 
       if (skipGit && skipVsce && skipOvsx) {
         console.error(c.red('No platforms to publish to.'))

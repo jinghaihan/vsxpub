@@ -1,8 +1,7 @@
 import type { CommandOptions, Platform, PublishOptions } from './types'
 import process from 'node:process'
-import c from 'ansis'
 import { createConfigLoader } from 'unconfig'
-import { DEFAULT_PUBLISH_OPTIONS, PLATFORM_CHOICES } from './constants'
+import { DEFAULT_PUBLISH_OPTIONS } from './constants'
 import { getGitHubRepo, getGitTag, getVersionByGitTag, readTokenFromGitHubCli } from './git'
 import { getPackageName, getPackageVersion } from './package'
 
@@ -59,13 +58,6 @@ export async function resolveConfig(options: Partial<CommandOptions>): Promise<P
     : config.include ?? []
 
   config.include = include.filter(p => !config.exclude.includes(p as Platform))
-
-  if (config.exclude.length) {
-    const invalidPlatforms = config.exclude.filter(p => !PLATFORM_CHOICES.includes(p))
-    if (invalidPlatforms.length) {
-      console.warn(`Invalid exclude platform: ${c.yellow(invalidPlatforms.join(', '))}`)
-    }
-  }
 
   return config as PublishOptions
 }

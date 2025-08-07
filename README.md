@@ -90,6 +90,8 @@ Modern IDEs like Cursor and Windsurf that fork VS Code obtain their extensions f
 
 When versions become inconsistent between the two platforms, it causes numerous problems for users who expect the same extension experience across different IDEs.
 
+Additionally, to handle more complex scenarios, `vsxpub` also uploads the .vsix file to the GitHub release page, providing users with the option for manual installation when automatic publishing to platforms is not possible or desired.
+
 ## License
 
 [MIT](./LICENSE) License © [jinghaihan](https://github.com/jinghaihan)
