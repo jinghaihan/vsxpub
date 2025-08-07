@@ -26,7 +26,7 @@ Required environment variables:
 - `VSCE_PAT` - VS Code Marketplace personal access token
 - `OVSX_PAT` - OpenVSX registry personal access token
 
-For local development, follow the vsce and ovsx documentation to set up personal access tokens. For CI/CD, add these as GitHub repository `secrets` or skip specific platforms.
+For local development, follow the [Visual Studio Marketplace](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token) and [Open VSX Registry](https://github.com/eclipse/openvsx/wiki/Publishing-Extensions#1-create-an-access-token) documentation to set up personal access tokens. For CI/CD, add these as GitHub repository `secrets` or skip specific platforms.
 
 ## GitHub Actions Integration
 
@@ -77,7 +77,7 @@ jobs:
       # Publish extension to all platforms
       # Or you can skip publishing to specific platforms in CI and run npx vsxpub locally without configuring secrets
       - name: Publish Extension
-        run: npx vsxpub
+        run: npx vsxpub --no-dependencies
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           VSCE_PAT: ${{secrets.VSCE_PAT}}

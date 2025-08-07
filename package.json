@@ -15,8 +15,9 @@
     "url": "https://github.com/jinghaihan/vsxpub/issues"
   },
   "keywords": [
-    "cli",
+    "vscode",
     "vscode-extensions",
+    "vsx",
     "publish"
   ],
   "exports": {

@@ -39,7 +39,7 @@ try {
       const skipOvsx = !config.include.includes('ovsx')
 
       if (skipGit && skipVsce && skipOvsx) {
-        console.error(c.red('No platforms to publish to.'))
+        console.error(c.red('Please specify at least one platform to publish to.'))
         process.exit(1)
       }
 
@@ -100,7 +100,7 @@ async function execCommand(cmd: string, args: string[], config: PublishOptions) 
 
 async function createPackage(config: PublishOptions) {
   const args = normalizeArgs(['vsce', 'package'], config)
-  return await tryExec({
+  return await executeWithFeedback({
     config,
     message: 'Creating .vsix package...',
     successMessage: 'Created .vsix package.',
@@ -116,11 +116,11 @@ async function createPackage(config: PublishOptions) {
 
 async function publishToVsce(vsix: string, config: PublishOptions) {
   const exec = async (args: string[]) => {
-    return await tryExec({
+    return await executeWithFeedback({
       config,
-      message: 'Publishing to vsce...',
-      successMessage: 'Published to vsce.',
-      errorMessage: 'Failed to publish to vsce.',
+      message: 'Publishing to visual studio code marketplace...',
+      successMessage: 'Published to visual studio code marketplace.',
+      errorMessage: 'Failed to publish to visual studio code marketplace.',
       fn: async () => {
         await execCommand('npx', args, config)
       },
@@ -140,12 +140,11 @@ async function publishToVsce(vsix: string, config: PublishOptions) {
 
 async function publishToOvsx(vsix: string, config: PublishOptions) {
   const args = normalizeArgs(['ovsx', 'publish', vsix], config)
-
-  return await tryExec({
+  return await executeWithFeedback({
     config,
-    message: 'Publishing to ovsx...',
-    successMessage: 'Published to ovsx.',
-    errorMessage: 'Failed to publish to ovsx.',
+    message: 'Publishing to open vsx registry...',
+    successMessage: 'Published to open vsx registry.',
+    errorMessage: 'Failed to publish to open vsx registry.',
     fn: async () => {
       await execCommand('npx', args, config)
     },
@@ -157,11 +156,11 @@ async function publishToOvsx(vsix: string, config: PublishOptions) {
 
 async function publishToGit(vsix: string, config: PublishOptions) {
   const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
-  return await tryExec({
+  return await executeWithFeedback({
     config,
-    message: 'Uploading .vsix to release page...',
-    successMessage: 'Uploaded .vsix to release page.',
-    errorMessage: 'Failed to upload .vsix to release page. Please ensure the release page has been created.',
+    message: 'Uploading .vsix to github release page...',
+    successMessage: 'Uploaded .vsix to github release page.',
+    errorMessage: 'Failed to upload, please ensure the github release page has been created.',
     fn: async () => {
       await execCommand('gh', args, config)
     },
@@ -172,13 +171,14 @@ async function publishToGit(vsix: string, config: PublishOptions) {
 }
 
 function normalizeArgs(args: string[], options: PublishOptions) {
-  if (!options.dependencies)
+  if (!options.dependencies) {
     args.push('--no-dependencies')
+  }
 
   return args
 }
 
-async function tryExec(options: {
+async function executeWithFeedback(options: {
   config: PublishOptions
   message: string
   successMessage: string
