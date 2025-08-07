@@ -20,9 +20,6 @@ catalogs:
       specifier: ^19.1.0
       version: 19.1.0
   dev:
-    acorn:
-      specifier: latest
-      version: 8.15.0
     typescript:
       specifier: ^5.9.2
       version: 5.9.2
@@ -55,6 +52,9 @@ catalogs:
     unconfig:
       specifier: ^7.3.2
       version: 7.3.2
+    yocto-spinner:
+      specifier: ^1.0.0
+      version: 1.0.0
   script:
     tsx:
       specifier: ^4.20.3
@@ -87,6 +87,9 @@ importers:
       unconfig:
         specifier: catalog:node
         version: 7.3.2
+      yocto-spinner:
+        specifier: catalog:node
+        version: 1.0.0
     devDependencies:
       '@antfu/eslint-config':
         specifier: catalog:lint
@@ -94,9 +97,6 @@ importers:
       '@types/node':
         specifier: catalog:types
         version: 24.2.0
-      acorn:
-        specifier: catalog:dev
-        version: 8.15.0
       bumpp:
         specifier: catalog:cli
         version: 10.2.2
@@ -2625,6 +2625,10 @@ packages:
   yocto-queue@1.2.1:
     resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
     engines: {node: '>=12.20'}
+
+  yocto-spinner@1.0.0:
+    resolution: {integrity: sha512-VPX8P/+Z2Fnpx8PC/JELbxp3QRrBxjAekio6yulGtA5gKt9YyRc5ycCb+NHgZCbZ0kx9KxwZp7gC6UlrCcCdSQ==}
+    engines: {node: '>=18.19'}
 
   yoctocolors@2.1.1:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
@@ -5345,6 +5349,10 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.2.1: {}
+
+  yocto-spinner@1.0.0:
+    dependencies:
+      yoctocolors: 2.1.1
 
   yoctocolors@2.1.1: {}
 

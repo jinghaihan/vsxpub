@@ -1,4 +1,4 @@
-import type { CommandOptions, PublishOptions } from './types'
+import type { CommandOptions, Platform, PublishOptions } from './types'
 import process from 'node:process'
 import c from 'ansis'
 import { createConfigLoader } from 'unconfig'
@@ -37,8 +37,10 @@ export async function resolveConfig(options: Partial<CommandOptions>): Promise<P
 
   config.name = config.name || await getPackageName(cwd)
   config.version = config.version || await getPackageVersion() || await getVersionByGitTag()
-  if (typeof config.dependencies !== 'boolean')
-    config.dependencies = false
+
+  if (typeof config.dependencies === 'string') {
+    config.dependencies = config.dependencies === 'true'
+  }
 
   config.repo = config.repo || await getGitHubRepo(config.baseUrl)
   config.tag = config.tag || await getGitTag() || `v${config.version}`
@@ -47,10 +49,16 @@ export async function resolveConfig(options: Partial<CommandOptions>): Promise<P
   config.vscePat = config.vscePat || process.env.VSCE_PAT || ''
   config.ovsxPat = config.ovsxPat || process.env.OVSX_PAT || ''
 
-  // normalize exclude
+  // exclude is higher priority than include
   config.exclude = typeof config.exclude === 'string'
     ? [config.exclude]
     : config.exclude ?? []
+
+  const include = typeof config.include === 'string'
+    ? [config.include]
+    : config.include ?? []
+
+  config.include = include.filter(p => !config.exclude.includes(p as Platform))
 
   if (config.exclude.length) {
     const invalidPlatforms = config.exclude.filter(p => !PLATFORM_CHOICES.includes(p))

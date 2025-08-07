@@ -5,8 +5,10 @@ import process from 'node:process'
 import c from 'ansis'
 import { cac } from 'cac'
 import { execa } from 'execa'
+import Spinner from 'yocto-spinner'
 import { name, version } from '../package.json'
 import { resolveConfig } from './config'
+import { PLATFORM_CHOICES } from './constants'
 
 try {
   const cli: CAC = cac('vsxpub')
@@ -21,6 +23,7 @@ try {
     .option('--github-token <token>', 'GitHub Token')
     .option('--vsce-pat <token>', 'Visual Studio Code Extension Token')
     .option('--ovsx-pat <token>', 'Open Vsx Registry Token')
+    .option('--include <platforms>', 'Include platforms from publishing (git, vsce, ovsx)', { default: PLATFORM_CHOICES })
     .option('--exclude <platforms>', 'Exclude platforms from publishing (git, vsce, ovsx)', { default: [] })
     .option('--dry', 'Dry run', { default: false })
     .allowUnknownOptions()
@@ -42,76 +45,32 @@ try {
 
       const failed: string[] = []
 
-      // publish to vscode marketplace
-      if (!skipVsce) {
-        // const args = ['vsce', 'publish', '--packagePath', vsix]
-        const args = ['vsce', 'publish']
-        if (config.vscePat) {
-          args.push('-p', config.vscePat)
-        }
-        const normalizedArgs = normalizeArgs(args, config)
-
-        const result = await tryExec({
-          config,
-          title: 'Publishing to vsce...',
-          successMessage: 'Published to vsce.',
-          errorMessage: 'Failed to publish to vsce.',
-          fn: async () => {
-            await execCommand('npx', normalizedArgs, config)
-          },
-          dryFn: () => {
-            console.log(c.green(`npx ${normalizedArgs.join(' ')}`))
-          },
-        })
-        if (!result)
-          failed.push('vsce')
-      }
-
       if (!existsSync(vsix)) {
-        await execCommand('npx', ['vsce', 'package'], config)
-      }
-
-      // publish to openvsx registry
-      if (!skipOvsx) {
-        const args = ['ovsx', 'publish', vsix]
-        if (config.ovsxPat) {
-          args.push('-p', config.ovsxPat)
+        const res = await createPackage(config)
+        if (!res) {
+          throw new Error('Failed to create .vsix package.')
         }
-        const normalizedArgs = normalizeArgs(args, config)
-
-        const result = await tryExec({
-          config,
-          title: 'Publishing to ovsx...',
-          successMessage: 'Published to ovsx.',
-          errorMessage: 'Failed to publish to ovsx.',
-          fn: async () => {
-            await execCommand('npx', normalizedArgs, config)
-          },
-          dryFn: () => {
-            console.log(c.green(`npx ${normalizedArgs.join(' ')}`))
-          },
-        })
-        if (!result)
-          failed.push('ovsx')
       }
 
       // upload .vsix to release page
       if (!skipGit) {
-        const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
-        const result = await tryExec({
-          config,
-          title: 'Uploading .vsix to release page...',
-          successMessage: 'Uploaded .vsix to release page.',
-          errorMessage: 'Failed to upload .vsix to release page. Please ensure the release page has been created.',
-          fn: async () => {
-            await execCommand('gh', args, config)
-          },
-          dryFn: () => {
-            console.log(c.green(`gh ${args.join(' ')}`))
-          },
-        })
-        if (!result)
+        const res = await publishToGit(vsix, config)
+        if (!res)
           failed.push('git')
+      }
+
+      // publish to vscode marketplace
+      if (!skipVsce) {
+        const res = await publishToVsce(vsix, config)
+        if (!res)
+          failed.push('vsce')
+      }
+
+      // publish to openvsx registry
+      if (!skipOvsx) {
+        const res = await publishToOvsx(vsix, config)
+        if (!res)
+          failed.push('ovsx')
       }
 
       if (failed.length > 0) {
@@ -136,7 +95,80 @@ async function execCommand(cmd: string, args: string[], config: PublishOptions) 
     OVSX_PAT: config.ovsxPat,
   }
 
-  await execa(cmd, args, { env })
+  await execa(cmd, args, { env, stdio: 'inherit' })
+}
+
+async function createPackage(config: PublishOptions) {
+  const args = normalizeArgs(['vsce', 'package'], config)
+  return await tryExec({
+    config,
+    message: 'Creating .vsix package...',
+    successMessage: 'Created .vsix package.',
+    errorMessage: 'Failed to create .vsix package.',
+    fn: async () => {
+      await execCommand('npx', args, config)
+    },
+    dryFn: () => {
+      console.log(c.yellow(`npx ${args.join(' ')}`))
+    },
+  })
+}
+
+async function publishToVsce(vsix: string, config: PublishOptions) {
+  const exec = async (args: string[]) => {
+    return await tryExec({
+      config,
+      message: 'Publishing to vsce...',
+      successMessage: 'Published to vsce.',
+      errorMessage: 'Failed to publish to vsce.',
+      fn: async () => {
+        await execCommand('npx', args, config)
+      },
+      dryFn: () => {
+        console.log(c.yellow(`npx ${args.join(' ')}`))
+      },
+    })
+  }
+
+  // try to publish with exist .vsix package
+  const res = await exec(normalizeArgs(['vsce', 'publish', '--packagePath', vsix], config))
+  if (res)
+    return true
+
+  return await exec(normalizeArgs(['vsce', 'publish'], config))
+}
+
+async function publishToOvsx(vsix: string, config: PublishOptions) {
+  const args = normalizeArgs(['ovsx', 'publish', vsix], config)
+
+  return await tryExec({
+    config,
+    message: 'Publishing to ovsx...',
+    successMessage: 'Published to ovsx.',
+    errorMessage: 'Failed to publish to ovsx.',
+    fn: async () => {
+      await execCommand('npx', args, config)
+    },
+    dryFn: () => {
+      console.log(c.yellow(`npx ${args.join(' ')}`))
+    },
+  })
+}
+
+async function publishToGit(vsix: string, config: PublishOptions) {
+  const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
+  return await tryExec({
+    config,
+    message: 'Uploading .vsix to release page...',
+    successMessage: 'Uploaded .vsix to release page.',
+    errorMessage: 'Failed to upload .vsix to release page. Please ensure the release page has been created.',
+    fn: async () => {
+      await execCommand('gh', args, config)
+    },
+    dryFn: () => {
+      console.log(c.yellow(`gh ${args.join(' ')}`))
+    },
+  })
 }
 
 function normalizeArgs(args: string[], options: PublishOptions) {
@@ -148,39 +180,35 @@ function normalizeArgs(args: string[], options: PublishOptions) {
 
 async function tryExec(options: {
   config: PublishOptions
-  title: string
+  message: string
   successMessage: string
   errorMessage: string
   fn: () => MaybePromise<void>
   dryFn?: () => MaybePromise<void>
 }): Promise<boolean> {
-  let success = false
-  console.log()
-  console.log(c.dim('--------------'))
-  console.log(c.blue(options.title))
+  let result = false
+  const spinner = Spinner({ text: c.blue(options.message) }).start()
+
   try {
-    if (options.config.dry)
+    if (options.config.dry) {
+      console.log()
       await options.dryFn?.()
-    else
+    }
+    else {
       await options.fn()
+    }
 
-    success = true
-
-    console.log()
-    console.log(c.green(options.successMessage))
-    console.log()
+    result = true
+    spinner.success(c.green(options.successMessage))
   }
   catch (error) {
-    console.log()
-    console.error(c.red(options.errorMessage))
+    spinner.error(c.red(options.errorMessage))
     console.error(c.red(error instanceof Error ? error.message : String(error)))
-    console.log()
-
-    success = false
+    result = false
   }
   finally {
-    console.log(c.dim('--------------'))
+    console.log()
   }
 
-  return success
+  return result
 }

@@ -53,12 +53,12 @@
     "cac": "catalog:node",
     "execa": "catalog:node",
     "pathe": "catalog:node",
-    "unconfig": "catalog:node"
+    "unconfig": "catalog:node",
+    "yocto-spinner": "catalog:node"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@types/node": "catalog:types",
-    "acorn": "catalog:dev",
     "bumpp": "catalog:cli",
     "eslint": "catalog:lint",
     "lint-staged": "catalog:lint",

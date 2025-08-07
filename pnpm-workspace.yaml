@@ -7,7 +7,6 @@ catalogs:
     pncat: ^0.4.1
     taze: ^19.1.0
   dev:
-    acorn: latest
     typescript: ^5.9.2
   lint:
     '@antfu/eslint-config': ^5.1.0
@@ -20,6 +19,7 @@ catalogs:
     execa: ^9.6.0
     pathe: ^2.0.3
     unconfig: ^7.3.2
+    yocto-spinner: ^1.0.0
   script:
     tsx: ^4.20.3
   test:

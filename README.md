@@ -13,11 +13,11 @@ A CLI tool for publishing VS Code extensions to the Marketplace, OpenVSX, and Gi
 npx vsxpub
 ```
 
-You can skip publishing to specific platforms by using the `--exclude`.
+You can skip publishing to specific platforms by using the `--include` or `--exclude`. exclude is higher priority than include.
 
 Examples:
 - Local development: `npx vsxpub --exclude git` to skip GitHub releases
-- CI/CD pipeline: `npx vsxpub --exclude vsce --exclude ovsx` to avoid configuring secrets
+- CI/CD pipeline: `npx vsxpub --include git` to avoid configuring secrets
 
 ## Environment Variables
 
@@ -55,16 +55,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-
       - name: Set node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
 
       - run: pnpm install
 
