@@ -1,20 +1,21 @@
 import type { CAC } from 'cac'
-import type { CommandOptions, MaybePromise, PublishOptions } from './types'
+import type { CommandOptions, PublishOptions } from './types'
 import { existsSync } from 'node:fs'
 import process from 'node:process'
 import c from 'ansis'
 import { cac } from 'cac'
 import { execa } from 'execa'
-import Spinner from 'yocto-spinner'
 import { name, version } from '../package.json'
 import { resolveConfig } from './config'
 import { PLATFORM_CHOICES } from './constants'
+import { executeWithFeedback } from './utils'
 
 try {
   const cli: CAC = cac('vsxpub')
 
   cli
     .command('')
+    .option('--cwd <dir>', 'Current working directory')
     .option('--repo <repo>', 'Github repo')
     .option('--tag <tag>', 'Github tag')
     .option('--name <name>', 'Extension name')
@@ -25,6 +26,8 @@ try {
     .option('--ovsx-pat <token>', 'Open Vsx Registry Token')
     .option('--include <platforms>', 'Include platforms from publishing (git, vsce, ovsx)', { default: PLATFORM_CHOICES })
     .option('--exclude <platforms>', 'Exclude platforms from publishing (git, vsce, ovsx)', { default: [] })
+    .option('--retry <count>', 'Retry count', { default: 3 })
+    .option('--retry-delay <ms>', 'Retry delay', { default: 1000 })
     .option('--dry', 'Dry run', { default: false })
     .allowUnknownOptions()
     .action(async (options: CommandOptions) => {
@@ -176,39 +179,4 @@ function normalizeArgs(args: string[], options: PublishOptions) {
   }
 
   return args
-}
-
-async function executeWithFeedback(options: {
-  config: PublishOptions
-  message: string
-  successMessage: string
-  errorMessage: string
-  fn: () => MaybePromise<void>
-  dryFn?: () => MaybePromise<void>
-}): Promise<boolean> {
-  let result = false
-  const spinner = Spinner({ text: c.blue(options.message) }).start()
-
-  try {
-    if (options.config.dry) {
-      console.log()
-      await options.dryFn?.()
-    }
-    else {
-      await options.fn()
-    }
-
-    result = true
-    spinner.success(c.green(options.successMessage))
-  }
-  catch (error) {
-    spinner.error(c.red(options.errorMessage))
-    console.error(c.red(error instanceof Error ? error.message : String(error)))
-    result = false
-  }
-  finally {
-    console.log()
-  }
-
-  return result
 }

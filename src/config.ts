@@ -1,5 +1,6 @@
 import type { CommandOptions, Platform, PublishOptions } from './types'
 import process from 'node:process'
+import c from 'ansis'
 import { createConfigLoader } from 'unconfig'
 import { DEFAULT_PUBLISH_OPTIONS } from './constants'
 import { getGitHubRepo, getGitTag, getVersionByGitTag, readTokenFromGitHubCli } from './git'
@@ -22,9 +23,7 @@ export async function resolveConfig(options: Partial<CommandOptions>): Promise<P
   const loader = createConfigLoader<CommandOptions>({
     sources: [
       {
-        files: [
-          'vsxpub.config',
-        ],
+        files: ['vsxpub.config'],
       },
     ],
     cwd,
@@ -58,6 +57,28 @@ export async function resolveConfig(options: Partial<CommandOptions>): Promise<P
     : config.include ?? []
 
   config.include = include.filter(p => !config.exclude.includes(p as Platform))
+
+  if (config.retry && typeof config.retry === 'string') {
+    const retry = Number(config.retry)
+    if (Number.isNaN(retry)) {
+      console.error(c.red('Invalid retry count'))
+      config.retry = 3
+    }
+    else {
+      config.retry = retry
+    }
+  }
+
+  if (config.retryDelay && typeof config.retryDelay === 'string') {
+    const retryDelay = Number(config.retryDelay)
+    if (Number.isNaN(retryDelay)) {
+      console.error(c.red('Invalid retry delay'))
+      config.retryDelay = 1000
+    }
+    else {
+      config.retryDelay = retryDelay
+    }
+  }
 
   return config as PublishOptions
 }

@@ -9,6 +9,16 @@ export interface CommonOptions {
   dry?: boolean
   include?: Platform[]
   exclude?: Platform[]
+  /**
+   * Retry count
+   * @default 3
+   */
+  retry?: number
+  /**
+   * Retry delay
+   * @default 1000ms
+   */
+  retryDelay?: number
 }
 
 export interface CommandOptions extends CommonOptions {

@@ -38,7 +38,7 @@
   "scripts": {
     "start": "tsx ./src/cli.ts",
     "build": "unbuild",
-    "typecheck": "tsc",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint",
     "deps": "taze major -I",
