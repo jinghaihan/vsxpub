@@ -25,7 +25,7 @@ try {
     .option('--vsce-pat <token>', 'Visual Studio Code Extension Token')
     .option('--ovsx-pat <token>', 'Open Vsx Registry Token')
     .option('--include <platforms>', 'Include platforms from publishing (git, vsce, ovsx)', { default: PLATFORM_CHOICES })
-    .option('--exclude <platforms>', 'Exclude platforms from publishing (git, vsce, ovsx)', { default: [] })
+    .option('--exclude <platforms>', 'Exclude platforms from publishing (git, vsce, ovsx)')
     .option('--retry <count>', 'Retry count', { default: 3 })
     .option('--retry-delay <ms>', 'Retry delay', { default: 1000 })
     .option('--dry', 'Dry run', { default: false })
