@@ -19,6 +19,10 @@ Examples:
 - Local development: `npx vsxpub --exclude git` to skip GitHub releases
 - CI/CD pipeline: `npx vsxpub --include git` to avoid configuring secrets
 
+<p align='center'>
+<img src='./assets/help.png' />
+</p>
+
 ## Environment Variables
 
 Required environment variables:

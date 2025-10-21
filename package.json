@@ -2,7 +2,7 @@
   "name": "vsxpub",
   "type": "module",
   "version": "0.1.1",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.18.3",
   "description": "A CLI tool to publish VS Code extensions to Marketplace, OpenVSX, and GitHub Releases.",
   "author": "jinghaihan",
   "license": "MIT",
@@ -44,9 +44,8 @@
     "deps": "taze major -I",
     "release": "bumpp && pnpm publish --no-git-checks",
     "catalog": "pncat",
-    "prepare": "npx simple-git-hooks",
+    "prepare": "simple-git-hooks",
     "bootstrap": "pnpm install",
-    "preinstall": "npx only-allow pnpm",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {

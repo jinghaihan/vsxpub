@@ -1,28 +1,28 @@
 packages: []
 catalogs:
   build:
-    unbuild: ^3.6.0
+    unbuild: ^3.6.1
   cli:
-    bumpp: ^10.2.2
-    pncat: ^0.4.1
-    taze: ^19.1.0
+    bumpp: ^10.3.1
+    pncat: ^0.7.3
+    taze: ^19.8.1
   dev:
-    typescript: ^5.9.2
+    typescript: ^5.9.3
   lint:
-    '@antfu/eslint-config': ^5.2.0
-    eslint: ^9.32.0
-    lint-staged: ^16.1.4
+    '@antfu/eslint-config': ^6.0.0
+    eslint: ^9.38.0
+    lint-staged: ^16.2.5
     simple-git-hooks: ^2.13.1
   node:
-    ansis: ^4.1.0
+    ansis: ^4.2.0
     cac: ^6.7.14
     execa: ^9.6.0
     pathe: ^2.0.3
-    unconfig: ^7.3.2
+    unconfig: ^7.3.3
     yocto-spinner: ^1.0.0
   script:
-    tsx: ^4.20.3
+    tsx: ^4.20.6
   test:
     vitest: ^3.2.4
   types:
-    '@types/node': ^24.2.0
+    '@types/node': ^24.9.1
