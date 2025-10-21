@@ -1,7 +1,7 @@
 import type { PublishOptions } from '../src/types'
 import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_PUBLISH_OPTIONS } from '../src/constants'
-import { executeWithFeedback } from '../src/utils'
+import { runWithRetry } from '../src/utils'
 
 const publisOptions: PublishOptions = {
   ...DEFAULT_PUBLISH_OPTIONS,
@@ -17,11 +17,11 @@ const publisOptions: PublishOptions = {
   ovsxPat: 'ovsx-pat',
 }
 
-describe('executeWithFeedback', () => {
+describe('runWithRetry', () => {
   it('should execute function successfully', async () => {
     const mockFn = vi.fn().mockResolvedValue(undefined)
 
-    const result = await executeWithFeedback({
+    const result = await runWithRetry({
       config: publisOptions,
       message: 'Testing...',
       successMessage: 'Success!',
@@ -37,7 +37,7 @@ describe('executeWithFeedback', () => {
     const mockFn = vi.fn()
     const mockDryFn = vi.fn().mockResolvedValue(undefined)
 
-    const result = await executeWithFeedback({
+    const result = await runWithRetry({
       config: { ...publisOptions, dry: true },
       message: 'Testing...',
       successMessage: 'Dry Run Success!',
@@ -57,7 +57,7 @@ describe('executeWithFeedback', () => {
       .mockRejectedValueOnce(new Error('Second failure'))
       .mockResolvedValueOnce(undefined)
 
-    const result = await executeWithFeedback({
+    const result = await runWithRetry({
       config: { ...publisOptions, retry: 2, retryDelay: 10 },
       message: 'Testing...',
       successMessage: 'Success!',
@@ -75,7 +75,7 @@ describe('executeWithFeedback', () => {
       .mockRejectedValueOnce(new Error('Second failure'))
       .mockRejectedValueOnce(new Error('Third failure'))
 
-    const result = await executeWithFeedback({
+    const result = await runWithRetry({
       config: { ...publisOptions, retry: 2, retryDelay: 10 },
       message: 'Testing...',
       successMessage: 'Success!',
@@ -90,7 +90,7 @@ describe('executeWithFeedback', () => {
   it('should not retry when retryCount is not provided', async () => {
     const mockFn = vi.fn().mockRejectedValue(new Error('Error'))
 
-    const result = await executeWithFeedback({
+    const result = await runWithRetry({
       config: { ...publisOptions, retry: 0 },
       message: 'Testing...',
       successMessage: 'Success!',

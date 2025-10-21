@@ -3,7 +3,7 @@ import type { MaybePromise, PublishOptions } from './types'
 import c from 'ansis'
 import Spinner from 'yocto-spinner'
 
-export async function executeWithFeedback(options: {
+export async function runWithRetry(options: {
   config: PublishOptions
   message: string
   successMessage: string

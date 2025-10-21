@@ -42,7 +42,7 @@
     "test": "vitest",
     "lint": "eslint",
     "deps": "taze major -I",
-    "release": "bumpp && pnpm publish --no-git-checks",
+    "release": "bumpp",
     "catalog": "pncat",
     "prepare": "simple-git-hooks",
     "bootstrap": "pnpm install",

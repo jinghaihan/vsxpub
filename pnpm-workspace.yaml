@@ -26,3 +26,6 @@ catalogs:
     vitest: ^3.2.4
   types:
     '@types/node': ^24.9.1
+onlyBuiltDependencies:
+  - esbuild
+  - simple-git-hooks

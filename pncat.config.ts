@@ -7,4 +7,5 @@ export default defineConfig({
       match: ['yocto-spinner'],
     },
   ]),
+  postRun: 'eslint --fix "**/package.json" "**/pnpm-workspace.yaml"',
 })

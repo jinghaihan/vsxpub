@@ -8,7 +8,7 @@ import { execa } from 'execa'
 import { name, version } from '../package.json'
 import { resolveConfig } from './config'
 import { PLATFORM_CHOICES } from './constants'
-import { executeWithFeedback } from './utils'
+import { runWithRetry } from './utils'
 
 try {
   const cli: CAC = cac('vsxpub')
@@ -103,7 +103,7 @@ async function execCommand(cmd: string, args: string[], config: PublishOptions) 
 
 async function createPackage(config: PublishOptions) {
   const args = normalizeArgs(['vsce', 'package'], config)
-  return await executeWithFeedback({
+  return await runWithRetry({
     config,
     message: 'Creating .vsix package...',
     successMessage: 'Created .vsix package.',
@@ -119,7 +119,7 @@ async function createPackage(config: PublishOptions) {
 
 async function publishToVsce(vsix: string, config: PublishOptions) {
   const exec = async (args: string[]) => {
-    return await executeWithFeedback({
+    return await runWithRetry({
       config,
       message: 'Publishing to visual studio code marketplace...',
       successMessage: 'Published to visual studio code marketplace.',
@@ -143,7 +143,7 @@ async function publishToVsce(vsix: string, config: PublishOptions) {
 
 async function publishToOvsx(vsix: string, config: PublishOptions) {
   const args = normalizeArgs(['ovsx', 'publish', vsix], config)
-  return await executeWithFeedback({
+  return await runWithRetry({
     config,
     message: 'Publishing to open vsx registry...',
     successMessage: 'Published to open vsx registry.',
@@ -159,7 +159,7 @@ async function publishToOvsx(vsix: string, config: PublishOptions) {
 
 async function publishToGit(vsix: string, config: PublishOptions) {
   const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
-  return await executeWithFeedback({
+  return await runWithRetry({
     config,
     message: 'Uploading .vsix to github release page...',
     successMessage: 'Uploaded .vsix to github release page.',
