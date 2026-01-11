@@ -67,4 +67,4 @@ export interface CommandOptions extends CommonOptions {
   ovsxPat?: string
 }
 
-export type PublishOptions = Required<CommandOptions>
+export type Options = Required<CommandOptions>

@@ -1,9 +1,9 @@
-import type { PublishOptions } from '../src/types'
+import type { Options } from '../src/types'
 import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_PUBLISH_OPTIONS } from '../src/constants'
 import { runWithRetry } from '../src/utils'
 
-const publisOptions: PublishOptions = {
+const cliOptions: Options = {
   ...DEFAULT_PUBLISH_OPTIONS,
   cwd: '/test',
   dry: false,
@@ -22,7 +22,7 @@ describe('runWithRetry', () => {
     const mockFn = vi.fn().mockResolvedValue(undefined)
 
     const result = await runWithRetry({
-      config: publisOptions,
+      config: cliOptions,
       message: 'Testing...',
       successMessage: 'Success!',
       errorMessage: 'Failed!',
@@ -38,7 +38,7 @@ describe('runWithRetry', () => {
     const mockDryFn = vi.fn().mockResolvedValue(undefined)
 
     const result = await runWithRetry({
-      config: { ...publisOptions, dry: true },
+      config: { ...cliOptions, dry: true },
       message: 'Testing...',
       successMessage: 'Dry Run Success!',
       errorMessage: 'Dry Run Failed!',
@@ -58,7 +58,7 @@ describe('runWithRetry', () => {
       .mockResolvedValueOnce(undefined)
 
     const result = await runWithRetry({
-      config: { ...publisOptions, retry: 2, retryDelay: 10 },
+      config: { ...cliOptions, retry: 2, retryDelay: 10 },
       message: 'Testing...',
       successMessage: 'Success!',
       errorMessage: 'Failed!',
@@ -76,7 +76,7 @@ describe('runWithRetry', () => {
       .mockRejectedValueOnce(new Error('Third failure'))
 
     const result = await runWithRetry({
-      config: { ...publisOptions, retry: 2, retryDelay: 10 },
+      config: { ...cliOptions, retry: 2, retryDelay: 10 },
       message: 'Testing...',
       successMessage: 'Success!',
       errorMessage: 'Failed!',
@@ -91,7 +91,7 @@ describe('runWithRetry', () => {
     const mockFn = vi.fn().mockRejectedValue(new Error('Error'))
 
     const result = await runWithRetry({
-      config: { ...publisOptions, retry: 0 },
+      config: { ...cliOptions, retry: 0 },
       message: 'Testing...',
       successMessage: 'Success!',
       errorMessage: 'Failed!',

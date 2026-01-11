@@ -41,7 +41,7 @@ For local development, follow the [Visual Studio Marketplace](https://code.visua
 ### Example Workflow
 
 ```yaml
-name: Release
+name: Publish Extension
 
 permissions:
   contents: write
@@ -79,7 +79,7 @@ jobs:
         run: npx vsce package --no-dependencies
 
       # Publish extension to all platforms
-      # Or you can skip publishing to specific platforms in CI and run npx vsxpub locally without configuring secrets
+      # Or skip CI publishing and run `npx vsxpub` locally without configuring secrets
       - name: Publish Extension
         run: npx vsxpub --no-dependencies
         env:

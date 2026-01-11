@@ -1,5 +1,5 @@
 import type { CAC } from 'cac'
-import type { CommandOptions, PublishOptions } from './types'
+import type { CommandOptions, Options } from './types'
 import { existsSync } from 'node:fs'
 import process from 'node:process'
 import c from 'ansis'
@@ -90,7 +90,7 @@ catch (error) {
   process.exit(1)
 }
 
-async function execCommand(cmd: string, args: string[], config: PublishOptions) {
+async function execCommand(cmd: string, args: string[], config: Options) {
   const env = {
     ...process.env,
     GITHUB_TOKEN: config.githubToken,
@@ -101,7 +101,7 @@ async function execCommand(cmd: string, args: string[], config: PublishOptions) 
   await execa(cmd, args, { env, stdio: 'inherit' })
 }
 
-async function createPackage(config: PublishOptions) {
+async function createPackage(config: Options) {
   const args = normalizeArgs(['vsce', 'package'], config)
   return await runWithRetry({
     config,
@@ -117,7 +117,7 @@ async function createPackage(config: PublishOptions) {
   })
 }
 
-async function publishToVsce(vsix: string, config: PublishOptions) {
+async function publishToVsce(vsix: string, config: Options) {
   const exec = async (args: string[]) => {
     return await runWithRetry({
       config,
@@ -141,7 +141,7 @@ async function publishToVsce(vsix: string, config: PublishOptions) {
   return await exec(normalizeArgs(['vsce', 'publish'], config))
 }
 
-async function publishToOvsx(vsix: string, config: PublishOptions) {
+async function publishToOvsx(vsix: string, config: Options) {
   const args = normalizeArgs(['ovsx', 'publish', vsix], config)
   return await runWithRetry({
     config,
@@ -157,7 +157,7 @@ async function publishToOvsx(vsix: string, config: PublishOptions) {
   })
 }
 
-async function publishToGit(vsix: string, config: PublishOptions) {
+async function publishToGit(vsix: string, config: Options) {
   const args = ['release', 'upload', config.tag, vsix, '--repo', config.repo, '--clobber']
   return await runWithRetry({
     config,
@@ -173,7 +173,7 @@ async function publishToGit(vsix: string, config: PublishOptions) {
   })
 }
 
-function normalizeArgs(args: string[], options: PublishOptions) {
+function normalizeArgs(args: string[], options: Options) {
   if (!options.dependencies) {
     args.push('--no-dependencies')
   }

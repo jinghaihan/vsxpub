@@ -62,11 +62,12 @@
     "bumpp": "catalog:cli",
     "eslint": "catalog:lint",
     "lint-staged": "catalog:lint",
+    "p-retry": "catalog:inline",
     "pncat": "catalog:cli",
     "simple-git-hooks": "catalog:lint",
     "taze": "catalog:cli",
     "tsx": "catalog:script",
-    "typescript": "catalog:dev",
+    "typescript": "catalog:tsc",
     "unbuild": "catalog:build",
     "vitest": "catalog:test"
   },

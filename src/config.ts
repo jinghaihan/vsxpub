@@ -1,4 +1,4 @@
-import type { CommandOptions, Platform, PublishOptions } from './types'
+import type { CommandOptions, Options, Platform } from './types'
 import process from 'node:process'
 import c from 'ansis'
 import { createConfigLoader } from 'unconfig'
@@ -14,7 +14,7 @@ function normalizeConfig(options: Partial<CommandOptions>) {
   return options
 }
 
-export async function resolveConfig(options: Partial<CommandOptions>): Promise<PublishOptions> {
+export async function resolveConfig(options: Partial<CommandOptions>): Promise<Options> {
   const defaults = { ...DEFAULT_PUBLISH_OPTIONS }
   options = normalizeConfig(options)
 
@@ -80,5 +80,5 @@ export async function resolveConfig(options: Partial<CommandOptions>): Promise<P
     }
   }
 
-  return config as PublishOptions
+  return config as Options
 }

@@ -6,6 +6,10 @@ export default defineConfig({
       name: 'node',
       match: ['yocto-spinner'],
     },
+    {
+      name: 'inline',
+      match: ['p-retry'],
+    },
   ]),
   postRun: 'eslint --fix "**/package.json" "**/pnpm-workspace.yaml"',
 })
