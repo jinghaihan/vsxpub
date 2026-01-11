@@ -1,33 +1,37 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
 packages: []
 catalogs:
   build:
     unbuild: ^3.6.1
   cli:
-    bumpp: ^10.3.1
-    pncat: ^0.7.3
-    taze: ^19.8.1
-  inline:
-    p-retry: ^7.1.1
+    bumpp: ^10.3.2
+    pncat: ^0.7.8
+    taze: ^19.9.2
   lint:
-    '@antfu/eslint-config': ^6.0.0
-    eslint: ^9.38.0
-    lint-staged: ^16.2.5
+    '@antfu/eslint-config': ^6.7.3
+    eslint: ^9.39.2
+    lint-staged: ^16.2.7
     simple-git-hooks: ^2.13.1
   node:
     ansis: ^4.2.0
     cac: ^6.7.14
-    execa: ^9.6.0
+    execa: ^9.6.1
     pathe: ^2.0.3
-    unconfig: ^7.3.3
+    unconfig: ^7.4.2
     yocto-spinner: ^1.0.0
   script:
-    tsx: ^4.20.6
+    tsx: ^4.21.0
   test:
-    vitest: ^3.2.4
+    vitest: ^4.0.16
   tsc:
     typescript: ^5.9.3
   types:
-    '@types/node': ^24.9.1
+    '@types/node': ^24.10.7
+  utils:
+    p-retry: ^7.1.1
 onlyBuiltDependencies:
   - esbuild
   - simple-git-hooks
