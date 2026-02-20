@@ -25,8 +25,6 @@
     "./cli": "./dist/cli.mjs",
     "./package.json": "./package.json"
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "bin": {
     "vsxpub": "./bin/vsxpub.mjs"
@@ -37,7 +35,7 @@
   ],
   "scripts": {
     "start": "tsx ./src/cli.ts",
-    "build": "unbuild",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint",
@@ -49,15 +47,16 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "yocto-spinner": "catalog:node",
     "ansis": "catalog:prod",
     "cac": "catalog:prod",
     "execa": "catalog:prod",
     "p-retry": "catalog:prod",
     "pathe": "catalog:prod",
-    "unconfig": "catalog:prod"
+    "unconfig": "catalog:prod",
+    "yocto-spinner": "catalog:prod"
   },
   "devDependencies": {
+    "tsdown": "catalog:build",
     "unbuild": "catalog:build",
     "bumpp": "catalog:dev",
     "pncat": "catalog:dev",

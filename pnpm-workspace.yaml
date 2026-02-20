@@ -1,6 +1,7 @@
 packages: []
 catalogs:
   build:
+    tsdown: ^0.20.3
     unbuild: ^3.6.1
   dev:
     bumpp: ^10.4.1
@@ -13,8 +14,6 @@ catalogs:
     '@octohash/eslint-config': ^0.2.3
     eslint: ^9.39.3
     lint-staged: ^16.2.7
-  node:
-    yocto-spinner: ^1.1.0
   prod:
     ansis: ^4.2.0
     cac: ^6.7.14
@@ -22,6 +21,7 @@ catalogs:
     p-retry: ^7.1.1
     pathe: ^2.0.3
     unconfig: ^7.5.0
+    yocto-spinner: ^1.1.0
   test:
     vitest: ^4.0.18
   types:
