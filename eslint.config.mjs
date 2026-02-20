@@ -1,3 +1,3 @@
-import antfu from '@antfu/eslint-config'
+import { defineConfig } from '@octohash/eslint-config'
 
-export default antfu()
+export default defineConfig()
