@@ -6,6 +6,7 @@
   "description": "A CLI tool to publish VS Code extensions to Marketplace, OpenVSX, and GitHub Releases.",
   "author": "jinghaihan",
   "license": "MIT",
+  "funding": "https://github.com/sponsors/jinghaihan",
   "homepage": "https://github.com/jinghaihan/vsxpub#readme",
   "repository": {
     "type": "git",
