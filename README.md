@@ -21,7 +21,7 @@ Examples:
 - CI/CD pipeline: `npx vsxpub --include git` to avoid configuring secrets
 
 <p align='center'>
-<img src='./assets/help.png' />
+<img src='./assets/help.png' alt="screenshot" />
 </p>
 
 ## Environment Variables
